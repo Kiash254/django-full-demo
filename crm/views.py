@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Customers,Products,Order,Tag
+from .forms import OrderForm
 # Create your views here.
 def home(request):
     orders = Order.objects.all()
@@ -31,3 +32,8 @@ def customers(request,pk):
         }
     
     return render(request, 'customers.html',context)
+
+
+def createOrder(request):
+    context = {}
+    return render(request, 'order_form.html',context)
