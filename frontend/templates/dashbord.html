@@ -48,8 +48,8 @@
                     <td>{{ order.product }}</td>
                     <td>{{ order.date_created }}</td>
                     <td>{{ order.status }}</td>
-                    <td><a href="" class="btn btn-primary btn-sm">Update</a></td>
-                    <td><a href="" class="btn btn-danger btn-sm">Remove</a></td>
+                    <td><a href="{% url 'crm:update_order' order.id  %}" class="btn btn-primary btn-sm">Update</a></td>
+                    <td><a href="{% url 'crm:delete_order' order.id %}" class="btn btn-danger btn-sm">Delete</a></td>
                 </tr>
                 {% endfor %}
             </table>
