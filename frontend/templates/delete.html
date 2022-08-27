@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<p>Are you sure you want to delete the "{{item}}"</p>
-<form action="" method="POST">
-    {% csrf_token %}
+<div class="row">
+    <div class="col-md-6">
+        <div class="card card-body">
+            <p>Are you sure you want to delete the "{{item}}"</p>
+        <form action="" method="POST">
+            {% csrf_token %}
 
-    <a href="{% url 'crm:home' %}">Cancel</a>
-    <input type="submit" name="confirm" id="delete">
-</form>
+            <a href="{% url 'crm:home' %}" class="btn btn-warning">Cancel</a>
+            <input type="submit" class="btn btn-danger" name="confirm" id="delete">
+        </form>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
