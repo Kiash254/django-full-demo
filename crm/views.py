@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from .models import Customers,Products,Order,Tag
 from .forms import OrderForm
+from django.forms import inlineformset_factory
 # Create your views here.
 def home(request):
     orders = Order.objects.all()
@@ -14,7 +15,7 @@ def home(request):
         'customers':customers,
         'total_orders':total_orders,
         'delivered':delivered,
-    'pending':pending
+         'pending':pending
     }
     return render(request, 'dashbord.html',context)
 def products(request):
@@ -34,15 +35,19 @@ def customers(request,pk):
     return render(request, 'customers.html',context)
 
 
-def createOrder(request):
-    form = OrderForm()
+def createOrder(request,pk):
+    OrderFormSet=inlineformset_factory(Customers,Order, fields=('product', 'status'), extra=10)
+    customer=Customers.objects.get(id=pk)
+    # form = OrderForm(initial={'customer':customer})
+    formset=OrderFormSet(queryset=Order.objects.none(),instance=customer)
     if request.method=='POST':
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            form.save()
+        # form = OrderForm(request.POST)
+        formset=OrderFormSet(request.POST, instance=customer)
+        if formset.is_valid():
+            formset.save()
             return redirect('crm:home')
     context = {
-        'form':form
+        'formset':formset
     }
     return render(request, 'order_form.html',context)
 

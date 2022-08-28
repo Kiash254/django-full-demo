@@ -9,7 +9,7 @@
             <h5>Customers:</h5>
             <hr>
             <a href="" class="btn btn-outline-info btn-sm btn-block">Update Customer</a>
-            <a href="" class="btn btn outline-danger btn-sm btn-block">Delete Customer</a>
+            <a href="{% url 'crm:create_order' customers.id %}" class="btn btn-primary btn-sm btn-block">Create Orders</a>
         </div>
     </div>
     <div class="col-md">
