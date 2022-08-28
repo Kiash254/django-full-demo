@@ -1,9 +1,22 @@
 from django.shortcuts import render,redirect
 from .models import Customers,Products,Order,Tag
-from .forms import OrderForm
+from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
+from django.contrib.auth.forms import UserCreationForm
 # Create your views here.
+def Register(request):
+    form = CreateUserForm()
+    if request.method=='POST':
+        form=CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+    context = {'form':form}
+    return render(request, 'register.html',context)
+
+def Login(request):
+    return render(request,'login.html')
+
 def home(request):
     orders = Order.objects.all()
     customers = Customers.objects.all()
