@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home,products,customers,createOrder,updateOrder,deleteOrder,Register,Login,Logoutview
+from .views import home,products,customers,createOrder,updateOrder,deleteOrder,Register,Login,Userpage,Logoutview
 app_name = 'crm'
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/',Login,name='login'),
     path('logout/',Logoutview,name='logout'),
     path('',home,name='home'),
+    path('user/',Userpage,name='user'),
     path('products/',products,name='products'),
     path('customers/<int:pk>/',customers,name='customers'),
     path('create_order/<int:pk>/',createOrder,name='create_order'),

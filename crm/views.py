@@ -16,10 +16,14 @@ def Register(request):
         if request.method=='POST':
             form=CreateUserForm(request.POST)
             if form.is_valid():
-                form.save()
+                user=form.save()
                 user=form.cleaned_data.get('username')
                 messages.success(request,'Account was created for '+ user)
                 return redirect('crm:login')
+                Customers.objects.create(
+                    user=user,
+                )
+
         context = {'form':form}
         return render(request, 'register.html',context)
 
@@ -63,6 +67,19 @@ def products(request):
     products = Products.objects.all()
     context = {'products':products}
     return render(request, 'products.html',context)
+@login_required(login_url='crm:login')
+def Userpage(request):
+    orders = request.user.customers.order_set.all()
+    total_orders = orders.count()
+    delivered = orders.filter(status='Delivered').count()
+    pending = orders.filter(status='Pending').count()
+    context = {
+        'orders':orders,
+        'total_orders':total_orders,
+        'delivered':delivered,
+        'pending':pending
+    }
+    return render(request, 'user.html',context)
 @login_required(login_url='crm:login')
 def customers(request,pk):
     customers = Customers.objects.get(id=pk)
