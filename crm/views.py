@@ -4,19 +4,45 @@ from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
+from django.contrib.auth import authenticate,login,logout   
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def Register(request):
-    form = CreateUserForm()
-    if request.method=='POST':
-        form=CreateUserForm(request.POST)
-        if form.is_valid():
-            form.save()
-    context = {'form':form}
-    return render(request, 'register.html',context)
+    if request.user.is_authenticated:
+        return redirect('crm:home')
+    else:
+        form = CreateUserForm()
+        if request.method=='POST':
+            form=CreateUserForm(request.POST)
+            if form.is_valid():
+                form.save()
+                user=form.cleaned_data.get('username')
+                messages.success(request,'Account was created for '+ user)
+                return redirect('crm:login')
+        context = {'form':form}
+        return render(request, 'register.html',context)
 
 def Login(request):
-    return render(request,'login.html')
+    if request.user.is_authenticated:
+        return redirect('crm:home')
+    else:
+        if request.method == 'POST':
+            username=request.POST.get('username')
+            password=request.POST.get('password')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('crm:home')
+            else:
+                messages.info(request,'Username or Password is incorrect')
+        return render(request,'login.html')
 
+
+def Logoutview(request):
+    logout(request)
+    return redirect('crm:login')
+@login_required(login_url='crm:login')
 def home(request):
     orders = Order.objects.all()
     customers = Customers.objects.all()
@@ -32,10 +58,12 @@ def home(request):
          'pending':pending
     }
     return render(request, 'dashbord.html',context)
+@login_required(login_url='crm:login')
 def products(request):
     products = Products.objects.all()
     context = {'products':products}
     return render(request, 'products.html',context)
+@login_required(login_url='crm:login')
 def customers(request,pk):
     customers = Customers.objects.get(id=pk)
     orders = customers.order_set.all()
@@ -51,7 +79,7 @@ def customers(request,pk):
     
     return render(request, 'customers.html',context)
 
-
+@login_required(login_url='crm:login')
 def createOrder(request,pk):
     OrderFormSet=inlineformset_factory(Customers,Order, fields=('product', 'status'), extra=10)
     customer=Customers.objects.get(id=pk)
@@ -67,7 +95,7 @@ def createOrder(request,pk):
         'formset':formset
     }
     return render(request, 'order_form.html',context)
-
+@login_required(login_url='crm:login')
 def updateOrder(request,pk):
     order = Order.objects.get(id=pk)
     form = OrderForm(instance=order)
@@ -80,7 +108,7 @@ def updateOrder(request,pk):
         'form':form
     }
     return render(request, 'order_form.html',context)
-
+@login_required(login_url='crm:login')
 def deleteOrder(request,pk):
     order = Order.objects.get(id=pk)
     if request.method=='POST':
