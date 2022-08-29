@@ -14,13 +14,20 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
+          {% if request.user.is_staff %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="{% url 'crm:home' %}">Dashbord |</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{% url 'crm:products' %}">Products |</a>
           </li>
-        </ul>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'crm:account' %}">Settings|</a>
+          </li>
+          {% endif %}
+        
+        </ul> 
       </div>
     </div>
     <span class="msg">Hello{{request.user}} </span>

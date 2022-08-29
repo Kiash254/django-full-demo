@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from .models import Customers,Products,Order,Tag
-from .forms import OrderForm, CreateUserForm
+from .forms import OrderForm, CreateUserForm,CustomerForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
 from django.contrib.auth.forms import UserCreationForm
@@ -20,10 +20,6 @@ def Register(request):
                 user=form.cleaned_data.get('username')
                 messages.success(request,'Account was created for '+ user)
                 return redirect('crm:login')
-                Customers.objects.create(
-                    user=user,
-                )
-
         context = {'form':form}
         return render(request, 'register.html',context)
 
@@ -80,6 +76,19 @@ def Userpage(request):
         'pending':pending
     }
     return render(request, 'user.html',context)
+@login_required(login_url='crm:login')
+def Account(request):
+    customers= request.user.customers
+    form=CustomerForm(instance=customers)
+    if request.method=='POST':
+        form=CustomerForm(request.POST,request.FILES,instance=customers)
+        if form.is_valid():
+            form.save()
+
+    context={
+        'form':form
+    }
+    return render(request,'settings.html',context)
 @login_required(login_url='crm:login')
 def customers(request,pk):
     customers = Customers.objects.get(id=pk)
